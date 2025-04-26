@@ -3,30 +3,69 @@
 <head>
   <title>Mortgage Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-    input { width: 100%; padding: 8px; margin: 10px 0; }
-    button { padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 600px; 
+      margin: auto; 
+      padding: 20px; 
+      background-color: #f9f9f9; 
+      color: #333; 
+      border-radius: 10px; 
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+    }
+    h2 { color: #0056b3; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #004080; }
+    .result { margin-top: 20px; font-size: 18px; color: #0056b3; font-weight: bold; }
   </style>
 </head>
 <body>
   <h2>Mortgage Calculator</h2>
+
   <label>Loan Amount ($):</label>
-  <input type="number" id="loanAmount">
+  <input type="number" id="loanAmount" placeholder="Loan Amount">
+
   <label>Interest Rate (%):</label>
-  <input type="number" id="interestRate">
+  <input type="number" id="interestRate" placeholder="Interest Rate">
+
   <label>Loan Term (Years):</label>
-  <input type="number" id="loanTerm">
+  <input type="number" id="loanTerm" placeholder="Loan Term">
+
+  <label>PMI ($ per month):</label>
+  <input type="number" id="pmi" placeholder="PMI (if applicable)">
+
+  <label>Property Taxes ($ per month):</label>
+  <input type="number" id="taxes" placeholder="Taxes">
+
+  <label>Home Insurance ($ per month):</label>
+  <input type="number" id="insurance" placeholder="Insurance">
+
   <button onclick="calculate()">Calculate</button>
-  <h3>Monthly Payment: <span id="payment">$0.00</span></h3>
+
+  <div class="result">
+    Monthly Payment: <span id="payment">$0.00</span>
+  </div>
 
   <script>
     function calculate() {
-      var loanAmount = document.getElementById('loanAmount').value;
-      var interestRate = document.getElementById('interestRate').value / 100 / 12;
-      var loanTerm = document.getElementById('loanTerm').value * 12;
+      var loanAmount = parseFloat(document.getElementById('loanAmount').value);
+      var interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+      var loanTerm = parseFloat(document.getElementById('loanTerm').value) * 12;
+      var pmi = parseFloat(document.getElementById('pmi').value) || 0;
+      var taxes = parseFloat(document.getElementById('taxes').value) || 0;
+      var insurance = parseFloat(document.getElementById('insurance').value) || 0;
+
       var x = Math.pow(1 + interestRate, loanTerm);
-      var payment = (loanAmount * x * interestRate) / (x - 1);
-      document.getElementById('payment').innerText = isFinite(payment) ? "$" + payment.toFixed(2) : "$0.00";
+      var principalAndInterest = (loanAmount * x * interestRate) / (x - 1);
+      var totalPayment = principalAndInterest + pmi + taxes + insurance;
+
+      if (!isNaN(totalPayment) && totalPayment != Infinity) {
+        document.getElementById('payment').innerText = "$" + totalPayment.toFixed(2);
+      } else {
+        document.getElementById('payment').innerText = "$0.00";
+      }
     }
   </script>
 </body>
